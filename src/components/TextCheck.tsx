@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 
-import axios from "axios";
+// import axios from "axios";
 
 // Simulated sentiment analysis function
-const analyzeSentiment = async (text: string): Promise<string> => {
+const analyzeSentiment = async (_: string): Promise<string> => {
   // Simulate API call delay
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -41,17 +41,17 @@ export default function TextCheck() {
   // const [text, setText] = useState<string>("")
   // const [result, setResult] = useState<string>("")
 
-  function checkSentiment(text: string) {
-    axios
-      .get(`http://localhost:8000/sentiment_check?text=${text}`)
-      .then((response) => {
-        console.log(response.data);
-        setResult(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  // function checkSentiment(text: string) {
+  //   axios
+  //     .get(`http://localhost:8000/sentiment_check?text=${text}`)
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       setResult(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
 
   // class SentimentPredictLevel(Enum):
   //   VERY_NEGATIVE = 0
@@ -80,20 +80,20 @@ export default function TextCheck() {
     }
   };
 
-  function mapResult(value: string) {
-    switch (value) {
-      case "VERY_NEGATIVE":
-        return "Very Negative";
-      case "NEGATIVE":
-        return "Negative";
-      case "NEUTRAL":
-        return "Neutral";
-      case "POSITIVE":
-        return "Positive";
-      case "VERY_POSITIVE":
-        return "Very Positive";
-    }
-  }
+  // function mapResult(value: string) {
+  //   switch (value) {
+  //     case "VERY_NEGATIVE":
+  //       return "Very Negative";
+  //     case "NEGATIVE":
+  //       return "Negative";
+  //     case "NEUTRAL":
+  //       return "Neutral";
+  //     case "POSITIVE":
+  //       return "Positive";
+  //     case "VERY_POSITIVE":
+  //       return "Very Positive";
+  //   }
+  // }
 
   return (
     <Card className="w-full max-w-md mx-auto">
