@@ -1,6 +1,6 @@
-import UploadsList from '@/components/UploadsList'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import UploadsList from "@/components/UploadsList";
+import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute('/uploads')({
+export const Route = createLazyFileRoute("/uploads")({
   component: UploadsList,
-})
+});
