@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <div className="bg-white shadow-sm">
       <div className="max-w-screen-lg mx-auto">
-        <header className="flex justify-between items-center">
+        <header className="flex justify-between items-center mx-5">
           <span className="max-w-min font-bold leading-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
             Sentiment Analyzer
           </span>
@@ -37,7 +37,7 @@ export default function Navbar() {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="text-sm font-semibold flex items-center gap-3">
-            Olga Schavochkina
+            <span className="hidden sm:inline-block">Olga Schavochkina</span>
             <button>
               <ExitIcon className="h-4 w-4" />
             </button>
