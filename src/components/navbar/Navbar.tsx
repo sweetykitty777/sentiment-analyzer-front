@@ -15,7 +15,7 @@ export default function Navbar() {
     <div className="bg-white shadow-sm">
       <div className="max-w-screen-lg mx-auto">
         <header className="flex justify-between items-center mx-5">
-          <span className="max-w-min font-bold leading-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+          <span className="hidden sm:block max-w-min font-bold leading-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
             Sentiment Analyzer
           </span>
           <NavigationMenu className="py-3">
