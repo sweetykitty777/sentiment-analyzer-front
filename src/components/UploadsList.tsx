@@ -1,5 +1,3 @@
-import { UploadIcon } from "@radix-ui/react-icons";
-
 import {
   ColumnDef,
   flexRender,
@@ -16,8 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { buttonVariants } from "./ui/button";
+import { useNavigate } from "@tanstack/react-router";
+import FileUploadDialog from "./ui/file-upload";
 
 interface Upload {
   upload_id: number;
@@ -126,18 +124,18 @@ for (let index = 0; index < 10; index++) {
 
 export default function UploadsList() {
   return (
-    <section>
-      <Card className="mx-auto w-full max-w-screen-lg">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>My Uploads</CardTitle>
-          <Link className={buttonVariants({ variant: "default" })}>
-            <UploadIcon className="mr-2 h-4 w-4" /> Upload File
-          </Link>
-        </CardHeader>
-        <CardContent>
-          <DataTable data={data} columns={columns} />
-        </CardContent>
-      </Card>
-    </section>
+    <>
+      <section>
+        <Card className="mx-auto w-full max-w-screen-lg">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>My Uploads</CardTitle>
+            <FileUploadDialog />
+          </CardHeader>
+          <CardContent>
+            <DataTable data={data} columns={columns} />
+          </CardContent>
+        </Card>
+      </section>
+    </>
   );
 }
