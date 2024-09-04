@@ -13,9 +13,9 @@ import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 export default function Navbar() {
   return (
     <div className="bg-white shadow-sm">
-      <div className="max-w-screen-lg mx-auto">
-        <header className="flex justify-between items-center mx-5">
-          <span className="hidden sm:block max-w-min font-bold leading-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+      <div className="mx-auto max-w-screen-lg">
+        <header className="mx-5 flex items-center justify-between">
+          <span className="hidden max-w-min bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text font-bold leading-4 text-transparent sm:block">
             Sentiment Analyzer
           </span>
           <NavigationMenu className="py-3">
@@ -36,7 +36,7 @@ export default function Navbar() {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
-          <div className="text-sm font-semibold flex items-center gap-3">
+          <div className="flex items-center gap-3 text-sm font-semibold">
             <span className="hidden sm:inline-block">Olga Schavochkina</span>
             <button>
               <ExitIcon className="h-4 w-4" />

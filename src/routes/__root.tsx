@@ -6,7 +6,7 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <Navbar />
-      <section className="mx-auto max-w-screen-lg p-5 my-3 rounded-sm">
+      <section className="mx-auto my-3 max-w-screen-lg rounded-sm p-5">
         <Outlet />
       </section>
       <TanStackRouterDevtools />

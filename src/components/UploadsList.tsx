@@ -127,8 +127,8 @@ for (let index = 0; index < 10; index++) {
 export default function UploadsList() {
   return (
     <section>
-      <Card className="w-full max-w-screen-lg mx-auto">
-        <CardHeader className="flex justify-between flex-row items-center">
+      <Card className="mx-auto w-full max-w-screen-lg">
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>My Uploads</CardTitle>
           <Link className={buttonVariants({ variant: "default" })}>
             <UploadIcon className="mr-2 h-4 w-4" /> Upload File

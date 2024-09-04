@@ -96,7 +96,7 @@ export default function TextCheck() {
   // }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="mx-auto w-full max-w-md">
       <CardHeader>
         <CardTitle>Sentiment Analysis</CardTitle>
         <CardDescription>
@@ -124,7 +124,7 @@ export default function TextCheck() {
 
           {sentiment && (
             <div
-              className={`text-sm font-semibold px-3 py-2 rounded-md ${
+              className={`rounded-md px-3 py-2 text-sm font-semibold ${
                 sentimentColors[sentiment]?.bg || "bg-gray-100"
               } ${sentimentColors[sentiment]?.text || "text-gray-800"}`}
             >

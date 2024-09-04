@@ -61,9 +61,9 @@ import { buttonVariants } from "../ui/button";
 export default function Upload() {
   return (
     <Card>
-      <CardHeader className="flex justify-between flex-row items-center space-y-0 flex-wrap gap-5">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-5 space-y-0">
         <CardTitle>My Uploads</CardTitle>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Link className={buttonVariants({ variant: "default" }) + "self-end"}>
             <DownloadIcon className="mr-2 h-4 w-4" /> Download .xlsx
           </Link>
@@ -79,7 +79,10 @@ export default function Upload() {
             <TabsTrigger value="entries">Entries</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">Analytics</TabsContent>
-          <TabsContent value="entries" className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <TabsContent
+            value="entries"
+            className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2"
+          >
             {/* Card with count of entries */}
             <Card>
               <CardHeader>
@@ -112,7 +115,7 @@ export default function Upload() {
               </CardContent>
             </Card>
 
-            <Card className="flex flex-col col-span-1 md:col-span-2">
+            <Card className="col-span-1 flex flex-col md:col-span-2">
               <CardHeader className="items-center pb-0">
                 <CardTitle>Pie Chart - Label</CardTitle>
                 <CardDescription>January - June 2024</CardDescription>
