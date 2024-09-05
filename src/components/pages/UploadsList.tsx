@@ -13,9 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { useNavigate } from "@tanstack/react-router";
-import FileUploadDialog from "./ui/file-upload";
+import FileUploadDialog from "../ui/file-upload";
 
 interface Upload {
   upload_id: number;

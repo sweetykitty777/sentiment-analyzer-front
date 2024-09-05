@@ -12,7 +12,6 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UploadsImport } from './routes/uploads'
-import { Route as LoginImport } from './routes/login_'
 import { Route as IndexImport } from './routes/index'
 import { Route as UploadsUploadIdImport } from './routes/uploads_.$uploadId'
 
@@ -20,11 +19,6 @@ import { Route as UploadsUploadIdImport } from './routes/uploads_.$uploadId'
 
 const UploadsRoute = UploadsImport.update({
   path: '/uploads',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LoginRoute = LoginImport.update({
-  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -49,13 +43,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
     '/uploads': {
       id: '/uploads'
       path: '/uploads'
@@ -77,7 +64,6 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  LoginRoute,
   UploadsRoute,
   UploadsUploadIdRoute,
 })
@@ -91,16 +77,12 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/login",
         "/uploads",
         "/uploads/$uploadId"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/login": {
-      "filePath": "login_.tsx"
     },
     "/uploads": {
       "filePath": "uploads.tsx"

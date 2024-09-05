@@ -1,4 +1,4 @@
-import UploadsList from "@/components/UploadsList";
+import UploadsList from "@/components/pages/UploadsList";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/uploads")({

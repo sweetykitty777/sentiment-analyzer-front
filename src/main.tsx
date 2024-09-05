@@ -18,7 +18,7 @@ declare module "@tanstack/react-router" {
 }
 
 import { AuthProvider } from "react-oidc-context";
-import { User } from "oidc-client-ts";
+import { User, WebStorageStateStore } from "oidc-client-ts";
 
 const onSigninCallback = (_user: User | void): void => {
   window.history.replaceState({}, document.title, window.location.pathname);
@@ -27,8 +27,9 @@ const onSigninCallback = (_user: User | void): void => {
 const oidcConfig = {
   authority: "https://lemur-15.cloud-iam.com/auth/realms/sentiment-analyzer/",
   client_id: "sentiment-analyzer-front",
-  redirect_uri: "http://localhost:5173",
+  redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
   onSigninCallback: onSigninCallback,
+  userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 
 // Render the app

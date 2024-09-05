@@ -9,7 +9,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge";
 
 const analyzeSentiment = async (_: string): Promise<string> => {
   await new Promise((resolve) => setTimeout(resolve, 1500));
