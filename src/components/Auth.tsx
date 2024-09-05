@@ -1,24 +1,23 @@
 import { ExitIcon } from "@radix-ui/react-icons";
-import { hasAuthParams, useAuth } from "react-oidc-context";
+import { useAuth } from "react-oidc-context";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
 
 export default function Auth() {
   const auth = useAuth();
-  const [hasTriedSignin, setHasTriedSignin] = useState(false);
+  // const [hasTriedSignin, setHasTriedSignin] = useState(false);
 
-  useEffect(() => {
-    if (
-      !hasAuthParams() &&
-      !auth.isAuthenticated &&
-      !auth.activeNavigator &&
-      !auth.isLoading &&
-      !hasTriedSignin
-    ) {
-      auth.signinRedirect();
-      setHasTriedSignin(true);
-    }
-  }, [auth, hasTriedSignin]);
+  // useEffect(() => {
+  //   if (
+  //     !hasAuthParams() &&
+  //     !auth.isAuthenticated &&
+  //     !auth.activeNavigator &&
+  //     !auth.isLoading &&
+  //     !hasTriedSignin
+  //   ) {
+  //     auth.signinRedirect();
+  //     setHasTriedSignin(true);
+  //   }
+  // }, [auth, hasTriedSignin]);
 
   switch (auth.activeNavigator) {
     case "signinSilent":
