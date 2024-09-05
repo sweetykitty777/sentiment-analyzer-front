@@ -17,13 +17,29 @@ declare module "@tanstack/react-router" {
   }
 }
 
+import { AuthProvider } from "react-oidc-context";
+import { User } from "oidc-client-ts";
+
+const onSigninCallback = (_user: User | void): void => {
+  window.history.replaceState({}, document.title, window.location.pathname);
+};
+
+const oidcConfig = {
+  authority: "https://lemur-15.cloud-iam.com/auth/realms/sentiment-analyzer/",
+  client_id: "sentiment-analyzer-front",
+  redirect_uri: "http://localhost:5173",
+  onSigninCallback: onSigninCallback,
+};
+
 // Render the app
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <AuthProvider {...oidcConfig}>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </StrictMode>,
   );
 }
