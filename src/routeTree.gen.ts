@@ -11,14 +11,15 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as UploadsImport } from './routes/uploads'
+import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as UploadsUploadIdImport } from './routes/uploads_.$uploadId'
+import { Route as AuthUploadsImport } from './routes/_auth/uploads'
+import { Route as AuthUploadsUploadIdImport } from './routes/_auth/uploads_.$uploadId'
 
 // Create/Update Routes
 
-const UploadsRoute = UploadsImport.update({
-  path: '/uploads',
+const AuthRoute = AuthImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -27,9 +28,14 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const UploadsUploadIdRoute = UploadsUploadIdImport.update({
+const AuthUploadsRoute = AuthUploadsImport.update({
+  path: '/uploads',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthUploadsUploadIdRoute = AuthUploadsUploadIdImport.update({
   path: '/uploads/$uploadId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -43,19 +49,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/uploads': {
-      id: '/uploads'
-      path: '/uploads'
-      fullPath: '/uploads'
-      preLoaderRoute: typeof UploadsImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
-    '/uploads/$uploadId': {
-      id: '/uploads/$uploadId'
+    '/_auth/uploads': {
+      id: '/_auth/uploads'
+      path: '/uploads'
+      fullPath: '/uploads'
+      preLoaderRoute: typeof AuthUploadsImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/uploads/$uploadId': {
+      id: '/_auth/uploads/$uploadId'
       path: '/uploads/$uploadId'
       fullPath: '/uploads/$uploadId'
-      preLoaderRoute: typeof UploadsUploadIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthUploadsUploadIdImport
+      parentRoute: typeof AuthImport
     }
   }
 }
@@ -64,8 +77,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  UploadsRoute,
-  UploadsUploadIdRoute,
+  AuthRoute: AuthRoute.addChildren({
+    AuthUploadsRoute,
+    AuthUploadsUploadIdRoute,
+  }),
 })
 
 /* prettier-ignore-end */
@@ -77,18 +92,26 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/uploads",
-        "/uploads/$uploadId"
+        "/_auth"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/uploads": {
-      "filePath": "uploads.tsx"
+    "/_auth": {
+      "filePath": "_auth.tsx",
+      "children": [
+        "/_auth/uploads",
+        "/_auth/uploads/$uploadId"
+      ]
     },
-    "/uploads/$uploadId": {
-      "filePath": "uploads_.$uploadId.tsx"
+    "/_auth/uploads": {
+      "filePath": "_auth/uploads.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/uploads/$uploadId": {
+      "filePath": "_auth/uploads_.$uploadId.tsx",
+      "parent": "/_auth"
     }
   }
 }

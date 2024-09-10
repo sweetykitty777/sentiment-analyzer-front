@@ -4,20 +4,6 @@ import { Button } from "./ui/button";
 
 export default function Auth() {
   const auth = useAuth();
-  // const [hasTriedSignin, setHasTriedSignin] = useState(false);
-
-  // useEffect(() => {
-  //   if (
-  //     !hasAuthParams() &&
-  //     !auth.isAuthenticated &&
-  //     !auth.activeNavigator &&
-  //     !auth.isLoading &&
-  //     !hasTriedSignin
-  //   ) {
-  //     auth.signinRedirect();
-  //     setHasTriedSignin(true);
-  //   }
-  // }, [auth, hasTriedSignin]);
 
   switch (auth.activeNavigator) {
     case "signinSilent":

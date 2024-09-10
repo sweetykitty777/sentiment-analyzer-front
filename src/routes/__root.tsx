@@ -1,8 +1,13 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import Navbar from "@/components/Navbar";
+import { AuthContextProps } from "react-oidc-context";
 
-export const Route = createRootRoute({
+interface RouterContext {
+  auth: AuthContextProps;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
       <Navbar />
