@@ -60,3 +60,16 @@ export const deleteUpload = async ({ auth, uploadId }: { auth: AuthContextProps,
         }
     });
 }
+
+
+export const checkText = async ({ auth, text }: { auth: AuthContextProps, text: string }): Promise<string> => {
+    const { data } = await client.get("/check", {
+        headers: {
+            Authorization: `Bearer ${auth?.user?.access_token}`
+        },
+        params: {
+            text: text
+        }
+    });
+    return data.results[0].sentiment;
+}

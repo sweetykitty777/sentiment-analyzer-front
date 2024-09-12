@@ -10,29 +10,21 @@ import {
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "../ui/badge";
+import { checkText } from "@/api";
+import { useAuth } from "react-oidc-context";
+import { mapSentiment } from "../upload/UploadsEntries";
 
-const analyzeSentiment = async (_: string): Promise<string> => {
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  const sentiments = [
-    "very positive",
-    "positive",
-    "neutral",
-    "negative",
-    "very negative",
-  ];
-  return sentiments[Math.floor(Math.random() * sentiments.length)];
-};
 
 const sentimentColors: Record<string, { bg: string; text: string }> = {
-  "very positive": { bg: "bg-green-100", text: "text-green-800" },
-  positive: { bg: "bg-lime-100", text: "text-lime-800" },
-  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
-  negative: { bg: "bg-orange-100", text: "text-orange-800" },
-  "very negative": { bg: "bg-red-100", text: "text-red-800" },
+  "very_positive": { bg: "bg-green-100", text: "text-green-800" },
+  "positive": { bg: "bg-lime-100", text: "text-lime-800" },
+  "neutral": { bg: "bg-gray-100", text: "text-gray-800" },
+  "negative": { bg: "bg-orange-100", text: "text-orange-800" },
+  "very_negative": { bg: "bg-red-100", text: "text-red-800" },
 };
 
 export default function TextCheck() {
+  const auth = useAuth();
   const [text, setText] = useState("");
   const [sentiment, setSentiment] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -43,7 +35,7 @@ export default function TextCheck() {
     setSentiment(null);
 
     try {
-      const result = await analyzeSentiment(text);
+      const result = await checkText({ auth, text });
       setSentiment(result);
     } catch (error) {
       console.error("Error analyzing sentiment:", error);
@@ -86,7 +78,7 @@ export default function TextCheck() {
                 sentimentColors[sentiment]?.bg || "bg-gray-100"
               } ${sentimentColors[sentiment]?.text || "text-gray-800"}`}
             >
-              {sentiment}
+              {mapSentiment(sentiment).text}
             </Badge>
           )}
         </CardFooter>

@@ -22,6 +22,7 @@ import { useAuth } from "react-oidc-context";
 import { deleteUpload } from "@/api";
 import { Upload } from "@/models/api";
 import { useState } from "react";
+import UploadStatusBadge from "../UploadStatusBadge";
 
 export function DataTable({
   data,
@@ -133,8 +134,22 @@ export default function UploadsList() {
 
   const columns: ColumnDef<Upload>[] = [
     {
+      accessorKey: "id",
+      header: "#",
+      cell: ({ row }) => {
+        return <span className="text-gray-400">{row.original.id}</span>;
+      },
+    },
+    {
       accessorKey: "name",
       header: "Name",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        return <UploadStatusBadge status={row.original.status} />;
+      },
     },
     {
       accessorKey: "created_at",
@@ -173,7 +188,10 @@ export default function UploadsList() {
             <FileUploadDialog />
           </CardHeader>
           <CardContent>
-            <DataTable data={uploads} columns={columns} />
+            <DataTable
+              data={uploads.sort((a, b) => b.id - a.id)}
+              columns={columns}
+            />
           </CardContent>
         </Card>
       </section>

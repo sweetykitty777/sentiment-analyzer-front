@@ -104,7 +104,7 @@ export function DataTable({
   );
 }
 
-function mapSentiment(sentiment: UploadEntry["sentiment"]): {
+export function mapSentiment(sentiment: string): {
   text: string;
   tw_class: string;
 } {
@@ -120,6 +120,20 @@ function mapSentiment(sentiment: UploadEntry["sentiment"]): {
     case "very_positive":
       return { text: "Very Positive", tw_class: "bg-green-400" };
   }
+  return { text: "Unknown", tw_class: "bg-gray-200" };
+}
+
+export function SentimentBadge({
+  sentiment,
+}: {
+  sentiment: UploadEntry["sentiment"];
+}) {
+  const { text, tw_class } = mapSentiment(sentiment);
+  return (
+    <Badge variant="secondary" className={"ring-0 " + tw_class}>
+      {text}
+    </Badge>
+  );
 }
 
 export default function UploadEntries({ upload }: { upload: UploadFull }) {
@@ -137,12 +151,7 @@ export default function UploadEntries({ upload }: { upload: UploadFull }) {
       accessorKey: "sentiment",
       header: "Sentiment",
       cell: (cell) => {
-        const { text, tw_class } = mapSentiment(cell.row.original.sentiment);
-        return (
-          <Badge variant="secondary" className={"ring-0 " + tw_class}>
-            {text}
-          </Badge>
-        );
+        return <SentimentBadge sentiment={cell.row.original.sentiment} />;
       },
     },
   ];

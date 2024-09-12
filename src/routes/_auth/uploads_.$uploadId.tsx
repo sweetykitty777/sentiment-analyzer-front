@@ -1,4 +1,4 @@
-import Upload from "@/components/uploads/Upload";
+import Upload from "@/components/upload/Upload";
 import { createFileRoute } from "@tanstack/react-router";
 import { fetchUploadFull } from "@/api";
 

@@ -16,15 +16,13 @@ import {
 import { useAuth } from "react-oidc-context";
 import { downloadUpload, FileDownloadExtension } from "@/api";
 
-
-
 export default function Upload() {
   const auth = useAuth();
   const upload = useLoaderData({ from: "/_auth/uploads/$uploadId" });
 
   async function downloadFile(extension: FileDownloadExtension) {
     const data = await downloadUpload({ auth, uploadId: upload.id, extension });
-    const name = `${upload.name.replace(".", "-")}-results.${extension}`
+    const name = `${upload.name.replace(".", "-")}-results.${extension}`;
     const url = window.URL.createObjectURL(new Blob([data]));
     const link = document.createElement("a");
     link.href = url;
@@ -38,18 +36,29 @@ export default function Upload() {
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-5 space-y-0">
         <CardTitle>{upload.name}</CardTitle>
         <div className="flex flex-wrap gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>
-                <DownloadIcon className="mr-2 h-4 w-4" /> Download
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => downloadFile("xlsx")} className="cursor-pointer">.xlsx</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => downloadFile("csv")}  className="cursor-pointer">.csv</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          {upload.status === "ready" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>
+                  <DownloadIcon className="mr-2 h-4 w-4" /> Download
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onClick={() => downloadFile("xlsx")}
+                  className="cursor-pointer"
+                >
+                  .xlsx
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => downloadFile("csv")}
+                  className="cursor-pointer"
+                >
+                  .csv
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <Link className={buttonVariants({ variant: "outline" })}>
             <Share1Icon className="mr-2 h-4 w-4" /> Share
           </Link>
@@ -59,7 +68,9 @@ export default function Upload() {
         <Tabs defaultValue="analytics">
           <TabsList>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="entries">Entries</TabsTrigger>
+            {upload.status === "ready" && (
+              <TabsTrigger value="entries">Entries</TabsTrigger>
+            )}
           </TabsList>
           <TabsContent
             value="analytics"
