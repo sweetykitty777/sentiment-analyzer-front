@@ -7,9 +7,9 @@ export default function Auth() {
 
   switch (auth.activeNavigator) {
     case "signinSilent":
-      return <div>Signing you in...</div>;
+      return <div>Signing in...</div>;
     case "signoutRedirect":
-      return <div>Signing you out...</div>;
+      return <div>Signing out...</div>;
   }
 
   if (auth.isLoading) {
@@ -45,12 +45,14 @@ export default function Auth() {
     auth.removeUser();
     auth.signoutRedirect({
       id_token_hint: auth.user?.id_token,
+      post_logout_redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+      redirectTarget: "self",
     });
     auth.clearStaleState();
   };
 
   return (
-    <div className="flex items-center gap-3 text-sm font-semibold">
+    <>
       {auth.isAuthenticated ? (
         <>
           <span className="hidden sm:inline-block">
@@ -61,10 +63,13 @@ export default function Auth() {
           </button>
         </>
       ) : (
-        <Button onClick={() => void auth.signinRedirect()} variant="outline">
+        <Button
+          onClick={() => void auth.signinRedirect({ redirectTarget: "self" })}
+          variant="outline"
+        >
           Log in
         </Button>
       )}
-    </div>
+    </>
   );
 }

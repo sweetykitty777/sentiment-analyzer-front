@@ -2,10 +2,8 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { TrashIcon, Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -15,27 +13,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { useLoaderData, useNavigate, useRouter } from "@tanstack/react-router";
-import FileUploadDialog from "../FileUploadDialog";
 import { Button } from "../ui/button";
-import { useAuth } from "react-oidc-context";
-import { deleteUpload } from "@/api";
-import { Upload } from "@/models/api";
-import { useState } from "react";
+import { UploadEntry, UploadFull } from "@/models/api";
+import { Badge } from "../ui/badge";
 
 export function DataTable({
   data,
   columns,
 }: {
-  data: Upload[];
-  columns: ColumnDef<Upload>[];
+  data: UploadEntry[];
+  columns: ColumnDef<UploadEntry>[];
 }) {
-  const navigate = useNavigate();
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
@@ -66,10 +58,6 @@ export function DataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() =>
-                    navigate({ to: `/uploads/${row.original.id}` })
-                  }
-                  className="cursor-pointer"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -116,64 +104,58 @@ export function DataTable({
   );
 }
 
-export default function UploadsList() {
-  const auth = useAuth();
-  const router = useRouter();
-  const [deleteInProgress, setDeleteInProgress] = useState<number | null>(null);
-
-  async function handleUploadDelete(e: React.MouseEvent, id: number) {
-    setDeleteInProgress(id);
-    e.stopPropagation();
-    await deleteUpload({ auth, uploadId: id });
-    router.invalidate();
-    setDeleteInProgress(null);
+function mapSentiment(sentiment: UploadEntry["sentiment"]): {
+  text: string;
+  tw_class: string;
+} {
+  switch (sentiment) {
+    case "very_negative":
+      return { text: "Very Negative", tw_class: "bg-red-400" };
+    case "negative":
+      return { text: "Negative", tw_class: "bg-red-200" };
+    case "neutral":
+      return { text: "Neutral", tw_class: "bg-gray-200" };
+    case "positive":
+      return { text: "Positive", tw_class: "bg-green-200" };
+    case "very_positive":
+      return { text: "Very Positive", tw_class: "bg-green-400" };
   }
+}
 
-  const uploads = useLoaderData({ from: "/_auth/uploads" });
-
-  const columns: ColumnDef<Upload>[] = [
+export default function UploadEntries({ upload }: { upload: UploadFull }) {
+  const columns: ColumnDef<UploadEntry>[] = [
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "id",
+      header: "#",
+      cell: (cell) => cell.row.index + 1,
     },
     {
-      accessorKey: "created_at",
-      header: "Created at",
+      accessorKey: "text",
+      header: "Text",
     },
     {
-      accessorKey: "created_by.email",
-      header: "Owner",
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
+      accessorKey: "sentiment",
+      header: "Sentiment",
+      cell: (cell) => {
+        const { text, tw_class } = mapSentiment(cell.row.original.sentiment);
         return (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => handleUploadDelete(e, row.original.id)}
-            className="float-right text-gray-400"
-          >
-            {deleteInProgress === row.original.id ? (
-              <Loader2 className="h-5 animate-spin" />
-            ) : (
-              <TrashIcon strokeWidth={2} className="h-4" />
-            )}
-          </Button>
+          <Badge variant="secondary" className={"ring-0 " + tw_class}>
+            {text}
+          </Badge>
         );
       },
     },
   ];
+
   return (
     <>
       <section>
         <Card className="mx-auto w-full max-w-screen-lg">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>My Uploads</CardTitle>
-            <FileUploadDialog />
           </CardHeader>
           <CardContent>
-            <DataTable data={uploads} columns={columns} />
+            <DataTable data={upload.entries} columns={columns} />
           </CardContent>
         </Card>
       </section>

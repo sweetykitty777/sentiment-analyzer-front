@@ -11,8 +11,17 @@ import {
 } from "@/components/ui/dialog";
 
 import { UploadIcon, XIcon } from "lucide-react";
+import { useAuth } from "react-oidc-context";
+import { uplaodFile } from "@/api";
+import { useRouter } from "@tanstack/react-router";
 
 export default function FileUploadDialog() {
+  const router = useRouter();
+  const auth = useAuth();
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,13 +54,33 @@ export default function FileUploadDialog() {
     [handleFile],
   );
 
+  const uploadFile = async () => {
+    if (file) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        await uplaodFile({ auth, file });
+      } catch (e) {
+        console.error(e);
+        setError("Failed to upload file");
+        setLoading(false);
+        return;
+      }
+      router.invalidate();
+      setOpen(false);
+      setLoading(false);
+      setFile(null);
+    }
+  };
+
   const removeFile = () => {
     setFile(null);
     setError(null);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <UploadIcon className="mr-2 h-4 w-4" /> Upload File
@@ -65,13 +94,14 @@ export default function FileUploadDialog() {
         <div
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
+          onClick={() => document.getElementById("fileInput")?.click()}
           className="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors duration-200 hover:border-primary"
         >
           <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
           <p className="mt-2 text-sm text-gray-600">
             {file
               ? "Replace the file by dropping a new one here"
-              : "Drag and drop a file here, or click to select"}
+              : "Drag and drop a file here, or click to select. Max 5MB."}
           </p>
           <input
             type="file"
@@ -79,12 +109,9 @@ export default function FileUploadDialog() {
             className="hidden"
             id="fileInput"
             aria-label="File input"
+            accept=".xlsx,.xls"
           />
-          <Button
-            variant="outline"
-            onClick={() => document.getElementById("fileInput")?.click()}
-            className="mt-4"
-          >
+          <Button variant="outline" className="mt-4">
             Select File
           </Button>
         </div>
@@ -108,8 +135,12 @@ export default function FileUploadDialog() {
           </div>
         )}
         <DialogFooter>
-          <Button className="w-full" disabled={!file}>
-            Upload File
+          <Button
+            className="w-full"
+            disabled={!file || loading}
+            onClick={uploadFile}
+          >
+            {loading ? "Uploading..." : "Upload File"}
           </Button>
         </DialogFooter>
       </DialogContent>

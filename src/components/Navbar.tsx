@@ -19,7 +19,7 @@ export default function Navbar() {
       <div className="mx-auto max-w-screen-lg">
         <header className="mx-5 flex items-center justify-between">
           <Link
-            className="hidden max-w-min bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text my-4 font-bold leading-4 text-transparent sm:block"
+            className="my-4 hidden max-w-min bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text font-bold leading-4 text-transparent sm:block"
             to="/"
           >
             Sentiment Analyzer
@@ -53,7 +53,9 @@ export default function Navbar() {
           </NavigationMenu>
 
           <div>
-            <Auth />
+            <div className="flex items-center gap-3 text-sm font-semibold">
+              <Auth />
+            </div>
           </div>
         </header>
       </div>

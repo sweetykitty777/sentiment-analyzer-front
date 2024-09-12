@@ -26,9 +26,9 @@ const analyzeSentiment = async (_: string): Promise<string> => {
 
 const sentimentColors: Record<string, { bg: string; text: string }> = {
   "very positive": { bg: "bg-green-100", text: "text-green-800" },
-  "positive": { bg: "bg-lime-100", text: "text-lime-800" },
-  "neutral": { bg: "bg-gray-100", text: "text-gray-800" },
-  "negative": { bg: "bg-orange-100", text: "text-orange-800" },
+  positive: { bg: "bg-lime-100", text: "text-lime-800" },
+  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
+  negative: { bg: "bg-orange-100", text: "text-orange-800" },
   "very negative": { bg: "bg-red-100", text: "text-red-800" },
 };
 
@@ -80,9 +80,14 @@ export default function TextCheck() {
           </Button>
 
           {sentiment && (
-            <Badge variant="outline"  className={`capitalize rounded-md px-3 py-2 text-sm font-semibold ${
-              sentimentColors[sentiment]?.bg || "bg-gray-100"
-            } ${sentimentColors[sentiment]?.text || "text-gray-800"}`}>{sentiment}</Badge>
+            <Badge
+              variant="outline"
+              className={`rounded-md px-3 py-2 text-sm font-semibold capitalize ${
+                sentimentColors[sentiment]?.bg || "bg-gray-100"
+              } ${sentimentColors[sentiment]?.text || "text-gray-800"}`}
+            >
+              {sentiment}
+            </Badge>
           )}
         </CardFooter>
       </form>
