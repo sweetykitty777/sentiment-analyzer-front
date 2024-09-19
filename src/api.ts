@@ -24,6 +24,7 @@ export const downloadUpload = async ({ auth, uploadId, extension }: { auth: Auth
 }
 
 export const fetchUploads = async ({ auth }: { auth: AuthContextProps }) => {
+    console.log(auth);
     const { data } = await client.get<Upload[]>('/uploads', {
         headers: {
             Authorization: `Bearer ${auth?.user?.access_token}`,

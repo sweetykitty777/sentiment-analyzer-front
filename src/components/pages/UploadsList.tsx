@@ -15,13 +15,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { useLoaderData, useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import FileUploadDialog from "../FileUploadDialog";
 import { Button } from "../ui/button";
 import { useAuth } from "react-oidc-context";
-import { deleteUpload } from "@/api";
+import { deleteUpload, fetchUploads } from "@/api";
 import { Upload } from "@/models/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UploadStatusBadge from "../UploadStatusBadge";
 
 export function DataTable({
@@ -121,7 +121,7 @@ export default function UploadsList() {
   const auth = useAuth();
   const router = useRouter();
   const [deleteInProgress, setDeleteInProgress] = useState<number | null>(null);
-
+  const [uploads, setUploads] = useState<Upload[]>([]);
   async function handleUploadDelete(e: React.MouseEvent, id: number) {
     setDeleteInProgress(id);
     e.stopPropagation();
@@ -129,8 +129,14 @@ export default function UploadsList() {
     router.invalidate();
     setDeleteInProgress(null);
   }
-
-  const uploads = useLoaderData({ from: "/_auth/uploads" });
+  
+  useEffect(() => {
+    (async () => {
+      const uploads = await fetchUploads({ auth });
+      setUploads(uploads);
+    })();
+  }
+  , [auth]);
 
   const columns: ColumnDef<Upload>[] = [
     {

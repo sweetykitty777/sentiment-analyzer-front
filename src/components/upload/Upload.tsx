@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadIcon, Share1Icon } from "@radix-ui/react-icons";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link, useLoaderData } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { Button, buttonVariants } from "../ui/button";
 import UploadAnalytics from "./UploadAnalytics";
 import UploadEntries from "./UploadsEntries";
@@ -14,13 +14,22 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useAuth } from "react-oidc-context";
-import { downloadUpload, FileDownloadExtension } from "@/api";
+import { downloadUpload, fetchUploadFull, FileDownloadExtension } from "@/api";
+import { useEffect, useState } from "react";
+import { UploadFull } from "@/models/api";
 
 export default function Upload() {
   const auth = useAuth();
-  const upload = useLoaderData({ from: "/_auth/uploads/$uploadId" });
+
+  const [upload, setUpload] = useState<UploadFull | null>(null);
+  const { uploadId } = useParams({ strict: false }) as { uploadId: string };
+  useEffect(() => {
+    fetchUploadFull({ auth, uploadId}).then(setUpload);
+  }, [auth, uploadId]);
 
   async function downloadFile(extension: FileDownloadExtension) {
+    if (!upload) return;
+
     const data = await downloadUpload({ auth, uploadId: upload.id, extension });
     const name = `${upload.name.replace(".", "-")}-results.${extension}`;
     const url = window.URL.createObjectURL(new Blob([data]));
@@ -30,6 +39,8 @@ export default function Upload() {
     document.body.appendChild(link);
     link.click();
   }
+
+  if (!upload) return null;
 
   return (
     <Card>
