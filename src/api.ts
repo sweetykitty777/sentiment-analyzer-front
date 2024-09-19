@@ -75,7 +75,7 @@ export const checkText = async ({ auth, text }: { auth: AuthContextProps, text: 
     return data.results[0].sentiment;
 }
 
-export const shareUpload = async ({ auth, uploadId, recipientId, recipientType }: { auth: AuthContextProps, uploadId: number, recipientId: string, recipientType: "ueser" | "org" }) => {
+export const shareUpload = async ({ auth, uploadId, recipientId, recipientType }: { auth: AuthContextProps, uploadId: number, recipientId: string, recipientType: "user" | "org" }) => {
     await client.post(`/uploads/${uploadId}/share`, {
         recipient_id: recipientId,
         recipient_type: recipientType
