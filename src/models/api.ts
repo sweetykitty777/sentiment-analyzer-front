@@ -24,3 +24,15 @@ export type Upload = {
 export type UploadFull = Upload & {
     entries: UploadEntry[];
 }
+
+export interface UploadAccessRequest {
+    recipient_id: string;
+    recipient_type: "user" | "org";
+}
+
+export interface UploadAccess {
+    id?: number | null;
+    recipient_id: string;
+    recipient_type:  "user" | "org";
+    upload_id: number;
+}

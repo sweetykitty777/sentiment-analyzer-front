@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { DownloadIcon, Share1Icon } from "@radix-ui/react-icons";
+import { DownloadIcon } from "@radix-ui/react-icons";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link, useParams } from "@tanstack/react-router";
-import { Button, buttonVariants } from "../ui/button";
+import { useParams } from "@tanstack/react-router";
+import { Button } from "../ui/button";
 import UploadAnalytics from "./UploadAnalytics";
 import UploadEntries from "./UploadsEntries";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
@@ -17,6 +17,7 @@ import { useAuth } from "react-oidc-context";
 import { downloadUpload, fetchUploadFull, FileDownloadExtension } from "@/api";
 import { useEffect, useState } from "react";
 import { UploadFull } from "@/models/api";
+import { AccessManagementDialogComponent } from "../access-management-dialog";
 
 export default function Upload() {
   const auth = useAuth();
@@ -24,7 +25,7 @@ export default function Upload() {
   const [upload, setUpload] = useState<UploadFull | null>(null);
   const { uploadId } = useParams({ strict: false }) as { uploadId: string };
   useEffect(() => {
-    fetchUploadFull({ auth, uploadId}).then(setUpload);
+    fetchUploadFull({ auth, uploadId }).then(setUpload);
   }, [auth, uploadId]);
 
   async function downloadFile(extension: FileDownloadExtension) {
@@ -70,9 +71,7 @@ export default function Upload() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-          <Link className={buttonVariants({ variant: "outline" })}>
-            <Share1Icon className="mr-2 h-4 w-4" /> Share
-          </Link>
+          <AccessManagementDialogComponent uploadId={upload.id} />
         </div>
       </CardHeader>
       <CardContent>

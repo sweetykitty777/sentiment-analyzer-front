@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AuthContextProps } from 'react-oidc-context';
-import { Upload, UploadFull } from './models/api';
+import { Upload, UploadAccess, UploadFull } from './models/api';
 
 export const client = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_API_URL + "/api/v1",
@@ -74,3 +74,24 @@ export const checkText = async ({ auth, text }: { auth: AuthContextProps, text: 
     });
     return data.results[0].sentiment;
 }
+
+export const shareUpload = async ({ auth, uploadId, recipientId, recipientType }: { auth: AuthContextProps, uploadId: number, recipientId: string, recipientType: "ueser" | "org" }) => {
+    await client.post(`/uploads/${uploadId}/share`, {
+        recipient_id: recipientId,
+        recipient_type: recipientType
+    }, {
+        headers: {
+            Authorization: `Bearer ${auth?.user?.access_token}`
+        }
+    });
+}
+
+export const getShareUploadsRecipients = async ({ auth, uploadId }: { auth: AuthContextProps, uploadId: number }) => {
+    const { data } = await client.get<UploadAccess[]>(`/uploads/${uploadId}/share`, {
+        headers: {
+            Authorization: `Bearer ${auth?.user?.access_token}`
+        }
+    });
+    return data;
+}
+
