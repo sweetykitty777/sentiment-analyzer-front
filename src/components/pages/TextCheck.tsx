@@ -11,20 +11,20 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "../ui/badge";
 import { checkText } from "@/api";
-import { useAuth } from "react-oidc-context";
 import { mapSentiment } from "../upload/UploadsEntries";
-
+import { usePrivateAxios } from "@/hooks";
 
 const sentimentColors: Record<string, { bg: string; text: string }> = {
-  "very_positive": { bg: "bg-green-100", text: "text-green-800" },
-  "positive": { bg: "bg-lime-100", text: "text-lime-800" },
-  "neutral": { bg: "bg-gray-100", text: "text-gray-800" },
-  "negative": { bg: "bg-orange-100", text: "text-orange-800" },
-  "very_negative": { bg: "bg-red-100", text: "text-red-800" },
+  very_positive: { bg: "bg-green-100", text: "text-green-800" },
+  positive: { bg: "bg-lime-100", text: "text-lime-800" },
+  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
+  negative: { bg: "bg-orange-100", text: "text-orange-800" },
+  very_negative: { bg: "bg-red-100", text: "text-red-800" },
 };
 
 export default function TextCheck() {
-  const auth = useAuth();
+  const client = usePrivateAxios();
+
   const [text, setText] = useState("");
   const [sentiment, setSentiment] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -35,7 +35,7 @@ export default function TextCheck() {
     setSentiment(null);
 
     try {
-      const result = await checkText({ auth, text });
+      const result = await checkText({ client, text });
       setSentiment(result);
     } catch (error) {
       console.error("Error analyzing sentiment:", error);

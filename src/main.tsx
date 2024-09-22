@@ -1,13 +1,13 @@
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-
-import { AuthProvider, useAuth } from "react-oidc-context";
+import { AuthContextProps, AuthProvider, useAuth } from "react-oidc-context";
 import { User, WebStorageStateStore } from "oidc-client-ts";
 
 import "./index.css";
+import { usePrivateAxios } from "./hooks";
 
 const router = createRouter({
   routeTree,
@@ -15,6 +15,7 @@ const router = createRouter({
   defaultPreload: "intent",
   context: {
     auth: undefined!,
+    axios: undefined!,
   },
 });
 
@@ -36,9 +37,22 @@ const oidcConfig = {
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 
+let resolveAuthClient: (client: AuthContextProps) => void;
+const authClient: Promise<AuthContextProps> = new Promise(
+  (resolve) => { resolveAuthClient = resolve }
+);
+
 function InnerApp() {
   const auth = useAuth();
-  return <RouterProvider router={router} context={{ auth }} />;
+  const axios = usePrivateAxios();
+
+  useEffect(() => {
+    if (auth.isLoading) return;
+
+    resolveAuthClient(auth);
+  }, [auth, auth.isLoading]);
+  
+  return <RouterProvider router={router} context={{ auth: authClient, axios }} />;
 }
 
 const rootElement = document.getElementById("root")!;

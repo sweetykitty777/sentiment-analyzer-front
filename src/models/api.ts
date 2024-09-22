@@ -31,8 +31,7 @@ export interface UploadAccessRequest {
 }
 
 export interface UploadAccess {
-    id?: number | null;
     recipient_id: string;
+    name: string;
     recipient_type:  "user" | "org";
-    upload_id: number;
 }

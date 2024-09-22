@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/dialog";
 
 import { UploadIcon, XIcon } from "lucide-react";
-import { useAuth } from "react-oidc-context";
 import { uplaodFile } from "@/api";
 import { useRouter } from "@tanstack/react-router";
+import { usePrivateAxios } from "@/hooks";
 
 export default function FileUploadDialog() {
   const router = useRouter();
-  const auth = useAuth();
+  const axios = usePrivateAxios();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -60,7 +60,7 @@ export default function FileUploadDialog() {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        await uplaodFile({ auth, file });
+        await uplaodFile({ client: axios, file });
       } catch (e) {
         console.error(e);
         setError("Failed to upload file");

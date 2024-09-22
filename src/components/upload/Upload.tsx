@@ -18,20 +18,26 @@ import { downloadUpload, fetchUploadFull, FileDownloadExtension } from "@/api";
 import { useEffect, useState } from "react";
 import { UploadFull } from "@/models/api";
 import { AccessManagementDialogComponent } from "../access-management-dialog";
+import { usePrivateAxios } from "@/hooks";
 
 export default function Upload() {
   const auth = useAuth();
-
+  const axios = usePrivateAxios();
   const [upload, setUpload] = useState<UploadFull | null>(null);
   const { uploadId } = useParams({ strict: false }) as { uploadId: string };
+
   useEffect(() => {
-    fetchUploadFull({ auth, uploadId }).then(setUpload);
+    fetchUploadFull({ client: axios, uploadId }).then(setUpload);
   }, [auth, uploadId]);
 
   async function downloadFile(extension: FileDownloadExtension) {
     if (!upload) return;
 
-    const data = await downloadUpload({ auth, uploadId: upload.id, extension });
+    const data = await downloadUpload({
+      client: axios,
+      uploadId: upload.id,
+      extension,
+    });
     const name = `${upload.name.replace(".", "-")}-results.${extension}`;
     const url = window.URL.createObjectURL(new Blob([data]));
     const link = document.createElement("a");
@@ -71,7 +77,7 @@ export default function Upload() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-          <AccessManagementDialogComponent uploadId={upload.id} />
+          <AccessManagementDialogComponent upload={upload} />
         </div>
       </CardHeader>
       <CardContent>

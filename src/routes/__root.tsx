@@ -2,9 +2,11 @@ import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import Navbar from "@/components/Navbar";
 import { AuthContextProps } from "react-oidc-context";
+import { AxiosInstance } from "axios";
 
 interface RouterContext {
-  auth: AuthContextProps;
+  auth: Promise<AuthContextProps>;
+  axios: AxiosInstance;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

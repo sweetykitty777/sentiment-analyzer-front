@@ -15,14 +15,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useLoaderData, useNavigate, useRouter } from "@tanstack/react-router";
 import FileUploadDialog from "../FileUploadDialog";
 import { Button } from "../ui/button";
-import { useAuth } from "react-oidc-context";
-import { deleteUpload, fetchUploads } from "@/api";
+import { deleteUpload } from "@/api";
 import { Upload } from "@/models/api";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import UploadStatusBadge from "../UploadStatusBadge";
+import { usePrivateAxios } from "@/hooks";
+import { useAuth } from "react-oidc-context";
 
 export function DataTable({
   data,
@@ -118,25 +119,19 @@ export function DataTable({
 }
 
 export default function UploadsList() {
+  const client = usePrivateAxios();
   const auth = useAuth();
   const router = useRouter();
   const [deleteInProgress, setDeleteInProgress] = useState<number | null>(null);
-  const [uploads, setUploads] = useState<Upload[]>([]);
+  const uploads = useLoaderData({ from: "/_auth/uploads" });
+
   async function handleUploadDelete(e: React.MouseEvent, id: number) {
     setDeleteInProgress(id);
     e.stopPropagation();
-    await deleteUpload({ auth, uploadId: id });
+    await deleteUpload({ client, uploadId: id });
     router.invalidate();
     setDeleteInProgress(null);
   }
-  
-  useEffect(() => {
-    (async () => {
-      const uploads = await fetchUploads({ auth });
-      setUploads(uploads);
-    })();
-  }
-  , [auth]);
 
   const columns: ColumnDef<Upload>[] = [
     {
@@ -168,6 +163,9 @@ export default function UploadsList() {
     {
       id: "actions",
       cell: ({ row }) => {
+        if (row.original.created_by.id !== auth.user?.profile.sub) {
+          return null;
+        }
         return (
           <Button
             variant="ghost"
