@@ -342,8 +342,7 @@ export default function UploadInfo({ upload }: { upload: UploadFull }) {
       )}
       {upload.entries.length == 1 && (
         <Card className="col-span-2">
-          
-          <CardHeader className="flex flex-row justify-between items-center">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Text</CardTitle>
             {upload.entries[0].sentiment && (
               <Badge
