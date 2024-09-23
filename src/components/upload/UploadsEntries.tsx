@@ -17,7 +17,56 @@ import { Button } from "../ui/button";
 import { UploadEntry, UploadFull } from "@/models/api";
 import { Badge } from "../ui/badge";
 
-export function DataTable({
+const columns: ColumnDef<UploadEntry>[] = [
+  {
+    accessorKey: "id",
+    header: "#",
+    cell: (cell) => cell.row.index + 1,
+  },
+  {
+    accessorKey: "text",
+    header: "Text",
+  },
+  {
+    accessorKey: "sentiment",
+    header: "Sentiment",
+    cell: (cell) => {
+      return <SentimentBadge sentiment={cell.row.original.sentiment} />;
+    },
+  },
+];
+
+export default function UploadEntries({ upload }: { upload: UploadFull }) {
+  return (
+    <>
+      <section>
+        <Card className="mx-auto w-full max-w-screen-lg">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>My Uploads</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DataTable data={upload.entries} columns={columns} />
+          </CardContent>
+        </Card>
+      </section>
+    </>
+  );
+}
+
+export function SentimentBadge({
+  sentiment,
+}: {
+  sentiment: UploadEntry["sentiment"];
+}) {
+  const { text, tw_class } = mapSentiment(sentiment);
+  return (
+    <Badge variant="secondary" className={"ring-0 " + tw_class}>
+      {text}
+    </Badge>
+  );
+}
+
+function DataTable({
   data,
   columns,
 }: {
@@ -29,7 +78,6 @@ export function DataTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
   return (
     <div>
       <div className="rounded-md border">
@@ -121,53 +169,4 @@ export function mapSentiment(sentiment: string): {
       return { text: "Very Positive", tw_class: "bg-green-400" };
   }
   return { text: "Unknown", tw_class: "bg-gray-200" };
-}
-
-export function SentimentBadge({
-  sentiment,
-}: {
-  sentiment: UploadEntry["sentiment"];
-}) {
-  const { text, tw_class } = mapSentiment(sentiment);
-  return (
-    <Badge variant="secondary" className={"ring-0 " + tw_class}>
-      {text}
-    </Badge>
-  );
-}
-
-export default function UploadEntries({ upload }: { upload: UploadFull }) {
-  const columns: ColumnDef<UploadEntry>[] = [
-    {
-      accessorKey: "id",
-      header: "#",
-      cell: (cell) => cell.row.index + 1,
-    },
-    {
-      accessorKey: "text",
-      header: "Text",
-    },
-    {
-      accessorKey: "sentiment",
-      header: "Sentiment",
-      cell: (cell) => {
-        return <SentimentBadge sentiment={cell.row.original.sentiment} />;
-      },
-    },
-  ];
-
-  return (
-    <>
-      <section>
-        <Card className="mx-auto w-full max-w-screen-lg">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>My Uploads</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <DataTable data={upload.entries} columns={columns} />
-          </CardContent>
-        </Card>
-      </section>
-    </>
-  );
 }

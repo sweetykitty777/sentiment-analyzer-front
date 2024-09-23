@@ -4,24 +4,26 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLoaderData } from "@tanstack/react-router";
-import { Button } from "../components/ui/button";
-import UploadEntries from "../components/upload/UploadsEntries";
+import { Button } from "../ui/button";
+import UploadEntries from "../upload/UploadsEntries";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import { downloadUpload } from "@/api";
-import { AccessManagementDialogComponent } from "../components/AccessManagementDialog";
+import { AccessManagementDialogComponent } from "../AccessManagementDialog";
 import { usePrivateAxios } from "@/hooks";
-import UploadInfo from "../components/upload/UploadInfo";
+import UploadInfo from "../upload/UploadInfo";
 
 export default function Upload() {
   const axios = usePrivateAxios();
   const upload = useLoaderData({ from: "/_auth/uploads/$uploadId" });
 
   async function downloadFile(extension: "xlsx" | "csv") {
+    if (!upload) return;
+
     const data = await downloadUpload({
       client: axios,
       uploadId: upload.id,
@@ -36,13 +38,36 @@ export default function Upload() {
     link.click();
   }
 
+  const isOneEntry = upload?.entries.length === 1;
+
+  if (!upload) return null;
   return (
     <Card>
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-5 space-y-0">
         <CardTitle>{upload.name}</CardTitle>
         <div className="flex flex-wrap gap-2">
           {upload.status === "ready" && (
-            <DownloadButton onClick={downloadFile} />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>
+                  <DownloadIcon className="mr-2 h-4 w-4" /> Download
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onClick={() => downloadFile("xlsx")}
+                  className="cursor-pointer"
+                >
+                  .xlsx
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => downloadFile("csv")}
+                  className="cursor-pointer"
+                >
+                  .csv
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           <AccessManagementDialogComponent upload={upload} />
         </div>
@@ -50,8 +75,10 @@ export default function Upload() {
       <CardContent>
         <Tabs defaultValue="analytics">
           <TabsList>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            {upload.status === "ready" && upload.entries.length > 1 && (
+            <TabsTrigger value="analytics">
+              {isOneEntry ? "General" : "Analytics"}
+            </TabsTrigger>
+            {upload.status === "ready" && !isOneEntry && (
               <TabsTrigger value="entries">Entries</TabsTrigger>
             )}
           </TabsList>
@@ -67,34 +94,5 @@ export default function Upload() {
         </Tabs>
       </CardContent>
     </Card>
-  );
-}
-function DownloadButton({
-  onClick,
-}: {
-  onClick: (extension: "xlsx" | "csv") => void;
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button>
-          <DownloadIcon className="mr-2 h-4 w-4" /> Download
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem
-          onClick={() => onClick("xlsx")}
-          className="cursor-pointer"
-        >
-          .xlsx
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => onClick("csv")}
-          className="cursor-pointer"
-        >
-          .csv
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

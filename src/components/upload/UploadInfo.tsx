@@ -26,58 +26,7 @@ import { Separator } from "../ui/separator";
 import { UploadFull } from "@/models/api";
 import { useEffect, useState } from "react";
 import UploadStatusBadge from "../UploadStatusBadge";
-import { Badge } from "../ui/badge";
-import { mapSentiment } from "./UploadsEntries";
-
-const sentimentColors: Record<string, { bg: string; text: string }> = {
-  very_positive: { bg: "bg-green-100", text: "text-green-800" },
-  positive: { bg: "bg-lime-100", text: "text-lime-800" },
-  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
-  negative: { bg: "bg-orange-100", text: "text-orange-800" },
-  very_negative: { bg: "bg-red-100", text: "text-red-800" },
-};
-
-const chartConfig = {
-  visitors: {
-    label: "Sentiments",
-  },
-  very_positive: {
-    label: "Very Positive",
-    color: "hsl(var(--chart-1))",
-  },
-  positive: {
-    label: "Positive",
-    color: "hsl(var(--chart-2))",
-  },
-  neutral: {
-    label: "Neutral",
-    color: "hsl(var(--chart-3))",
-  },
-  negative: {
-    label: "Negative",
-    color: "hsl(var(--chart-4))",
-  },
-  very_negative: {
-    label: "Very Negative",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig;
-
-type UploadAnalyticsValues = {
-  sum_positive: number;
-  sum_neutral: number;
-  sum_negative: number;
-
-  very_positive: number;
-  positive: number;
-  neutral: number;
-  negative: number;
-  very_negative: number;
-
-  positive_percentage: number;
-  neutral_percentage: number;
-  negative_percentage: number;
-};
+import { SentimentBadge } from "./UploadsEntries";
 
 export default function UploadInfo({ upload }: { upload: UploadFull }) {
   const [stats, setStats] = useState<UploadAnalyticsValues>();
@@ -86,96 +35,20 @@ export default function UploadInfo({ upload }: { upload: UploadFull }) {
   >([]);
 
   useEffect(() => {
-    const sum_positive = upload.entries.filter(
-      (entry) =>
-        entry.sentiment === "positive" || entry.sentiment === "very_positive",
-    ).length;
+    const res = calculateStats(upload.entries);
 
-    const sum_neutral = upload.entries.filter(
-      (entry) => entry.sentiment === "neutral",
-    ).length;
+    setStats(res);
 
-    const sum_negative = upload.entries.filter(
-      (entry) =>
-        entry.sentiment === "negative" || entry.sentiment === "very_negative",
-    ).length;
-
-    const very_positive = upload.entries.filter(
-      (entry) => entry.sentiment === "very_positive",
-    ).length;
-    const positive = upload.entries.filter(
-      (entry) => entry.sentiment === "positive",
-    ).length;
-    const neutral = upload.entries.filter(
-      (entry) => entry.sentiment === "neutral",
-    ).length;
-    const negative = upload.entries.filter(
-      (entry) => entry.sentiment === "negative",
-    ).length;
-    const very_negative = upload.entries.filter(
-      (entry) => entry.sentiment === "very_negative",
-    ).length;
-
-    const positive_percentage = (sum_positive / upload.entries.length) * 100;
-    const neutral_percentage = (sum_neutral / upload.entries.length) * 100;
-    const negative_percentage = (sum_negative / upload.entries.length) * 100;
-
-    setStats({
-      sum_positive,
-      sum_neutral,
-      sum_negative,
-      very_positive,
-      positive,
-      neutral,
-      negative,
-      very_negative,
-      positive_percentage,
-      neutral_percentage,
-      negative_percentage,
-    });
-
-    const pie = [];
-    if (positive > 0) {
-      pie.push({
-        sentiment: "positive",
-        count: positive,
-        fill: "var(--color-positive)",
-      });
-    }
-    if (neutral > 0) {
-      pie.push({
-        sentiment: "neutral",
-        count: neutral,
-        fill: "var(--color-neutral)",
-      });
-    }
-    if (negative > 0) {
-      pie.push({
-        sentiment: "negative",
-        count: negative,
-        fill: "var(--color-negative)",
-      });
-    }
-    if (very_positive > 0) {
-      pie.push({
-        sentiment: "very_positive",
-        count: very_positive,
-        fill: "var(--color-very_positive)",
-      });
-    }
-    if (very_negative > 0) {
-      pie.push({
-        sentiment: "very_negative",
-        count: very_negative,
-        fill: "var(--color-very_negative)",
-      });
-    }
+    const pie = getPie(res);
     setPieData(pie);
   }, [upload]);
 
   if (!stats) {
     return null;
   }
+
+  const isReady = upload.status === "ready";
+  const oneEntry = upload.entries.length === 1;
 
   return (
     <>
@@ -209,7 +82,7 @@ export default function UploadInfo({ upload }: { upload: UploadFull }) {
           </div>
         </CardContent>
       </Card>
-      {upload.status === "ready" && upload.entries.length > 1 && (
+      {isReady && !oneEntry && (
         <>
           <Card className="flex flex-col">
             <CardContent className="flex gap-4 p-4 pb-2">
@@ -340,20 +213,12 @@ export default function UploadInfo({ upload }: { upload: UploadFull }) {
           </Card>
         </>
       )}
-      {upload.entries.length == 1 && (
+      {oneEntry && (
         <Card className="col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Text</CardTitle>
             {upload.entries[0].sentiment && (
-              <Badge
-                variant="outline"
-                className={`rounded-md px-3 py-2 text-sm font-semibold capitalize ${
-                  sentimentColors[upload.entries[0].sentiment]?.bg ||
-                  "bg-gray-100"
-                } ${sentimentColors[upload.entries[0].sentiment]?.text || "text-gray-800"}`}
-              >
-                {mapSentiment(upload.entries[0].sentiment).text}
-              </Badge>
+              <SentimentBadge sentiment={upload.entries[0].sentiment} />
             )}
           </CardHeader>
           <CardContent>
@@ -368,3 +233,136 @@ export default function UploadInfo({ upload }: { upload: UploadFull }) {
     </>
   );
 }
+
+function calculateStats(entries: UploadFull["entries"]) {
+  const sum_positive = entries.filter(
+    (entry) =>
+      entry.sentiment === "positive" || entry.sentiment === "very_positive",
+  ).length;
+
+  const sum_neutral = entries.filter(
+    (entry) => entry.sentiment === "neutral",
+  ).length;
+
+  const sum_negative = entries.filter(
+    (entry) =>
+      entry.sentiment === "negative" || entry.sentiment === "very_negative",
+  ).length;
+
+  const very_positive = entries.filter(
+    (entry) => entry.sentiment === "very_positive",
+  ).length;
+  const positive = entries.filter(
+    (entry) => entry.sentiment === "positive",
+  ).length;
+  const neutral = entries.filter(
+    (entry) => entry.sentiment === "neutral",
+  ).length;
+  const negative = entries.filter(
+    (entry) => entry.sentiment === "negative",
+  ).length;
+  const very_negative = entries.filter(
+    (entry) => entry.sentiment === "very_negative",
+  ).length;
+
+  const positive_percentage = (sum_positive / entries.length) * 100;
+  const neutral_percentage = (sum_neutral / entries.length) * 100;
+  const negative_percentage = (sum_negative / entries.length) * 100;
+
+  return {
+    sum_positive,
+    sum_neutral,
+    sum_negative,
+    very_positive,
+    positive,
+    neutral,
+    negative,
+    very_negative,
+    positive_percentage,
+    neutral_percentage,
+    negative_percentage,
+  };
+}
+
+function getPie(stats: UploadAnalyticsValues) {
+  const pie = [];
+  if (stats.positive > 0) {
+    pie.push({
+      sentiment: "positive",
+      count: stats.positive,
+      fill: "var(--color-positive)",
+    });
+  }
+  if (stats.neutral > 0) {
+    pie.push({
+      sentiment: "neutral",
+      count: stats.neutral,
+      fill: "var(--color-neutral)",
+    });
+  }
+  if (stats.negative > 0) {
+    pie.push({
+      sentiment: "negative",
+      count: stats.negative,
+      fill: "var(--color-negative)",
+    });
+  }
+  if (stats.very_positive > 0) {
+    pie.push({
+      sentiment: "very_positive",
+      count: stats.very_positive,
+      fill: "var(--color-very_positive)",
+    });
+  }
+  if (stats.very_negative > 0) {
+    pie.push({
+      sentiment: "very_negative",
+      count: stats.very_negative,
+      fill: "var(--color-very_negative)",
+    });
+  }
+
+  return pie;
+}
+
+const chartConfig = {
+  visitors: {
+    label: "Sentiments",
+  },
+  very_positive: {
+    label: "Very Positive",
+    color: "hsl(var(--chart-1))",
+  },
+  positive: {
+    label: "Positive",
+    color: "hsl(var(--chart-2))",
+  },
+  neutral: {
+    label: "Neutral",
+    color: "hsl(var(--chart-3))",
+  },
+  negative: {
+    label: "Negative",
+    color: "hsl(var(--chart-4))",
+  },
+  very_negative: {
+    label: "Very Negative",
+    color: "hsl(var(--chart-5))",
+  },
+} satisfies ChartConfig;
+
+type UploadAnalyticsValues = {
+  sum_positive: number;
+  sum_neutral: number;
+  sum_negative: number;
+
+  very_positive: number;
+  positive: number;
+  neutral: number;
+  negative: number;
+  very_negative: number;
+
+  positive_percentage: number;
+  neutral_percentage: number;
+  negative_percentage: number;
+};

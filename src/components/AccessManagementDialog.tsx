@@ -30,6 +30,7 @@ export function AccessManagementDialogComponent({
   const client = usePrivateAxios();
 
   const [userOrg, setUserOrg] = useState<string | null>(null);
+
   const [userEmailInput, setUserEmailInput] = useState<string>("");
   const [shareWithOrg, setShareWithOrg] = useState(false);
 
@@ -38,18 +39,20 @@ export function AccessManagementDialogComponent({
     (item) => item.recipient_type === "user",
   );
 
-  function setShares() {
-    getShareUploadsRecipients({ client, uploadId: upload.id }).then((data) => {
-      setAccessList(data);
-      if (
-        data.some(
-          (item) =>
-            item.recipient_type === "org" && item.recipient_id === userOrg,
-        )
-      ) {
-        setShareWithOrg(true);
-      }
+  async function setShares() {
+    const res = await getShareUploadsRecipients({
+      client,
+      uploadId: upload.id,
     });
+    setAccessList(res);
+    if (
+      res.some(
+        (item) =>
+          item.recipient_type === "org" && item.recipient_id === userOrg,
+      )
+    ) {
+      setShareWithOrg(true);
+    }
   }
 
   useEffect(() => {
@@ -113,6 +116,8 @@ export function AccessManagementDialogComponent({
     }
   };
 
+  const isOwner = auth.user?.profile.sub === upload.created_by.id;
+
   return (
     <>
       <Dialog>
@@ -129,7 +134,7 @@ export function AccessManagementDialogComponent({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            {auth.user?.profile.sub === upload.created_by.id && (
+            {isOwner && (
               <div className="space-y-2">
                 <Label>Share access</Label>
                 <div className="flex flex-col space-y-2">
@@ -169,7 +174,8 @@ export function AccessManagementDialogComponent({
                       className="flex h-10 items-center justify-between rounded-md border px-3"
                     >
                       <span className="text-sm">{item.name}</span>
-                      {item.recipient_id === auth.user?.profile.sub && (
+                      {(item.recipient_id === auth.user?.profile.sub ||
+                        isOwner) && (
                         <Button
                           variant="ghost"
                           size="icon"

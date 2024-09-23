@@ -14,14 +14,6 @@ import { checkText } from "@/api";
 import { mapSentiment } from "../components/upload/UploadsEntries";
 import { usePrivateAxios } from "@/hooks";
 
-const sentimentColors: Record<string, { bg: string; text: string }> = {
-  very_positive: { bg: "bg-green-100", text: "text-green-800" },
-  positive: { bg: "bg-lime-100", text: "text-lime-800" },
-  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
-  negative: { bg: "bg-orange-100", text: "text-orange-800" },
-  very_negative: { bg: "bg-red-100", text: "text-red-800" },
-};
-
 export default function TextCheck() {
   const client = usePrivateAxios();
 
@@ -70,19 +62,28 @@ export default function TextCheck() {
           >
             {isAnalyzing ? "Analyzing..." : "Analyze Sentiment"}
           </Button>
-
-          {sentiment && (
-            <Badge
-              variant="outline"
-              className={`rounded-md px-3 py-2 text-sm font-semibold capitalize ${
-                sentimentColors[sentiment]?.bg || "bg-gray-100"
-              } ${sentimentColors[sentiment]?.text || "text-gray-800"}`}
-            >
-              {mapSentiment(sentiment).text}
-            </Badge>
-          )}
+          {sentiment && <SentimentBadge sentiment={sentiment} />}
         </CardFooter>
       </form>
     </Card>
+  );
+}
+
+const sentimentColors: Record<string, { bg: string; text: string }> = {
+  very_positive: { bg: "bg-green-100", text: "text-green-800" },
+  positive: { bg: "bg-lime-100", text: "text-lime-800" },
+  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
+  negative: { bg: "bg-orange-100", text: "text-orange-800" },
+  very_negative: { bg: "bg-red-100", text: "text-red-800" },
+};
+
+function SentimentBadge({ sentiment }: { sentiment: string }): React.ReactNode {
+  return (
+    <Badge
+      variant="outline"
+      className={`rounded-md px-3 py-2 text-sm font-semibold capitalize ${sentimentColors[sentiment]?.bg || "bg-gray-100"} ${sentimentColors[sentiment]?.text || "text-gray-800"}`}
+    >
+      {mapSentiment(sentiment).text}
+    </Badge>
   );
 }

@@ -27,12 +27,12 @@ import {
 export default function FileUploadDialog() {
   const router = useRouter();
   const axios = usePrivateAxios();
+
+  const [file, setFile] = useState<File | null>(null);
   const [format, setFormat] = useState<string>("plain");
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFile = useCallback((newFile: File | null) => {
