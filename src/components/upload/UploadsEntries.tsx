@@ -13,7 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
 import { UploadEntry, UploadFull } from "@/models/api";
 import { Badge } from "../ui/badge";
 
