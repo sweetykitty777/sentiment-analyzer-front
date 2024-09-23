@@ -31,19 +31,25 @@ export default function Auth() {
   };
 
   if (auth.isAuthenticated) {
-    <>
-      <span className="hidden sm:inline-block">{auth.user?.profile.email}</span>
-      <button onClick={handleLogout}>
-        <ExitIcon className="h-4 w-4" />
-      </button>
-    </>;
+    return (
+      <>
+        <span className="hidden sm:inline-block">
+          {auth.user?.profile.email}
+        </span>
+        <button onClick={handleLogout}>
+          <ExitIcon className="h-4 w-4" />
+        </button>
+      </>
+    );
   } else {
-    <Button
-      onClick={() => void auth.signinRedirect({ redirectTarget: "self" })}
-      variant="outline"
-    >
-      Log in
-    </Button>;
+    return (
+      <Button
+        onClick={() => void auth.signinRedirect({ redirectTarget: "self" })}
+        variant="outline"
+      >
+        Log in
+      </Button>
+    );
   }
 }
 

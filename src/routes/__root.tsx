@@ -16,7 +16,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <section className="mx-auto my-3 max-w-screen-lg rounded-sm p-5">
         <Outlet />
       </section>
-      <TanStackRouterDevtools />
+      {import.meta.env.DEV && <TanStackRouterDevtools />}
     </>
   ),
 });
