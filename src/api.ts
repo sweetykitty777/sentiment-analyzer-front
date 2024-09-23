@@ -6,18 +6,6 @@ export const client = axios.create({
     timeout: 20000,
 });
 
-export type FileDownloadExtension = 'xlsx' | 'csv';
-
-export const downloadUpload = async ({ client, uploadId, extension }: { client: AxiosInstance, uploadId: number, extension: FileDownloadExtension }) => {
-    const response = await client.get(`/uploads/${uploadId}/download`, {
-        responseType: 'blob',
-        params: {
-            type: extension
-        }
-
-    });
-    return response.data;
-}
 
 export const fetchUploads = async ({ client }: { client: AxiosInstance }) => {
     const { data } = await client.get<Upload[]>('/uploads');
@@ -43,6 +31,18 @@ export const uplaodFile = async ({ client, file, format }: { client: AxiosInstan
     return data;
 }
 
+export const downloadUpload = async ({ client, uploadId, extension }: { client: AxiosInstance, uploadId: number, extension: 'xlsx' | 'csv' }) => {
+    const response = await client.get(`/uploads/${uploadId}/download`, {
+        responseType: 'blob',
+        params: {
+            type: extension
+        }
+
+    });
+    return response.data;
+}
+
+
 export const deleteUpload = async ({ client, uploadId }: { client: AxiosInstance, uploadId: number }) => {
     await client.delete(`/uploads/${uploadId}`);
 }
@@ -65,8 +65,7 @@ export const shareUpload = async ({ client, uploadId, recipientId, recipientType
 }
 
 export const getShareUploadsRecipients = async ({ client, uploadId }: { client: AxiosInstance, uploadId: number }) => {
-    const { data } = await client.get<UploadAccess[]>(`/uploads/${uploadId}/share`, {
-    });
+    const { data } = await client.get<UploadAccess[]>(`/uploads/${uploadId}/share`);
     return data;
 }
 

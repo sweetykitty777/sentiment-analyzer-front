@@ -9,9 +9,9 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "../ui/badge";
+import { Badge } from "../components/ui/badge";
 import { checkText } from "@/api";
-import { mapSentiment } from "../upload/UploadsEntries";
+import { mapSentiment } from "../components/upload/UploadsEntries";
 import { usePrivateAxios } from "@/hooks";
 
 const sentimentColors: Record<string, { bg: string; text: string }> = {

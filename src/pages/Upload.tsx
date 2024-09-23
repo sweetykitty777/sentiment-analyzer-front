@@ -4,21 +4,21 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useParams } from "@tanstack/react-router";
-import { Button } from "../ui/button";
-import UploadEntries from "./UploadsEntries";
+import { Button } from "../components/ui/button";
+import UploadEntries from "../components/upload/UploadsEntries";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../components/ui/dropdown-menu";
 import { useAuth } from "react-oidc-context";
-import { downloadUpload, fetchUploadFull, FileDownloadExtension } from "@/api";
+import { downloadUpload, fetchUploadFull } from "@/api";
 import { useEffect, useState } from "react";
 import { UploadFull } from "@/models/api";
-import { AccessManagementDialogComponent } from "../access-management-dialog";
+import { AccessManagementDialogComponent } from "../components/access-management-dialog";
 import { usePrivateAxios } from "@/hooks";
-import UploadInfo from "./UploadInfo";
+import UploadInfo from "../components/upload/UploadInfo";
 
 export default function Upload() {
   const auth = useAuth();
@@ -30,7 +30,7 @@ export default function Upload() {
     fetchUploadFull({ client: axios, uploadId }).then(setUpload);
   }, [auth, uploadId]);
 
-  async function downloadFile(extension: FileDownloadExtension) {
+  async function downloadFile(extension: "xlsx" | "csv") {
     if (!upload) return;
 
     const data = await downloadUpload({

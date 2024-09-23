@@ -14,14 +14,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/card";
 import { useLoaderData, useNavigate, useRouter } from "@tanstack/react-router";
-import FileUploadDialog from "../FileUploadDialog";
-import { Button } from "../ui/button";
+import FileUploadDialog from "../components/FileUploadDialog";
+import { Button } from "../components/ui/button";
 import { deleteUpload } from "@/api";
 import { Upload } from "@/models/api";
 import { useState } from "react";
-import UploadStatusBadge from "../UploadStatusBadge";
+import UploadStatusBadge from "../components/UploadStatusBadge";
 import { usePrivateAxios } from "@/hooks";
 import { useAuth } from "react-oidc-context";
 

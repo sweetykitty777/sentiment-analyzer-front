@@ -2,6 +2,8 @@ import { useAuth } from "react-oidc-context";
 import { client } from "./api";
 import { useEffect } from "react";
 
+// This hook returns an axios instance with the Authorization header set to the user's access token.
+// Used in all calls to backend
 export function usePrivateAxios() {
     const auth = useAuth();
 

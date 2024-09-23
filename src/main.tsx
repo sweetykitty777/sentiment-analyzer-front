@@ -25,6 +25,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
+// Necessary for the OIDC redirect flow (read REAMDE.md of react-oidc-context)
 const onSigninCallback = (_user: User | void): void => {
   window.history.replaceState({}, document.title, window.location.pathname);
 };
@@ -37,22 +38,26 @@ const oidcConfig = {
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 
+// Fix async auth check in loader (when loader function is called before user useAuth check completed)
 let resolveAuthClient: (client: AuthContextProps) => void;
-const authClient: Promise<AuthContextProps> = new Promise(
-  (resolve) => { resolveAuthClient = resolve }
-);
+const authClient: Promise<AuthContextProps> = new Promise((resolve) => {
+  resolveAuthClient = resolve;
+});
 
 function InnerApp() {
   const auth = useAuth();
   const axios = usePrivateAxios();
 
+  // Resolve auth client when auth is loaded (loader waits for this)
   useEffect(() => {
     if (auth.isLoading) return;
 
     resolveAuthClient(auth);
   }, [auth, auth.isLoading]);
-  
-  return <RouterProvider router={router} context={{ auth: authClient, axios }} />;
+
+  return (
+    <RouterProvider router={router} context={{ auth: authClient, axios }} />
+  );
 }
 
 const rootElement = document.getElementById("root")!;

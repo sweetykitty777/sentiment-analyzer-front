@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_auth")({
       <div className="text-center">Redirecting to login page</div>
     ),
   }),
-  beforeLoad: async ({context: {auth}}) => {
-    await auth;
-  }
+  beforeLoad: async ({ context: { auth } }) => {
+    await auth; // wait for auth to return user before other loaders are called
+  },
 });

@@ -14,7 +14,15 @@ import { UploadIcon, XIcon } from "lucide-react";
 import { uplaodFile } from "@/api";
 import { useRouter } from "@tanstack/react-router";
 import { usePrivateAxios } from "@/hooks";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export default function FileUploadDialog() {
   const router = useRouter();
