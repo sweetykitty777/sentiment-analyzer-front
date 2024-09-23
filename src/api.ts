@@ -29,12 +29,15 @@ export const fetchUploadFull = async ({ client, uploadId }: { client: AxiosInsta
     return data;
 }
 
-export const uplaodFile = async ({ client, file }: { client: AxiosInstance, file: File }) => {
+export const uplaodFile = async ({ client, file, format }: { client: AxiosInstance, file: File, format: string }) => {
     const formData = new FormData();
     formData.append('file', file);
     const { data } = await client.post<Upload>('/uploads', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
+        },
+        params: {
+            format: format
         }
     });
     return data;

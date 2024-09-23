@@ -14,10 +14,12 @@ import { UploadIcon, XIcon } from "lucide-react";
 import { uplaodFile } from "@/api";
 import { useRouter } from "@tanstack/react-router";
 import { usePrivateAxios } from "@/hooks";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 
 export default function FileUploadDialog() {
   const router = useRouter();
   const axios = usePrivateAxios();
+  const [format, setFormat] = useState<string>("plain");
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,7 @@ export default function FileUploadDialog() {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        await uplaodFile({ client: axios, file });
+        await uplaodFile({ client: axios, file, format });
       } catch (e) {
         console.error(e);
         setError("Failed to upload file");
@@ -135,6 +137,18 @@ export default function FileUploadDialog() {
           </div>
         )}
         <DialogFooter>
+          <Select value={format} onValueChange={setFormat}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="File format" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Formats</SelectLabel>
+                <SelectItem value="plain">Plain</SelectItem>
+                <SelectItem value="interview-2">Interview-2</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <Button
             className="w-full"
             disabled={!file || loading}
