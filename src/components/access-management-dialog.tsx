@@ -54,7 +54,7 @@ export function AccessManagementDialogComponent({
 
   useEffect(() => {
     setShares();
-  }, [upload.id]);
+  }, [upload.id, userOrg]);
 
   useEffect(() => {
     if (auth.user?.profile.organization) {

@@ -5,7 +5,6 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useParams } from "@tanstack/react-router";
 import { Button } from "../ui/button";
-import UploadAnalytics from "./UploadAnalytics";
 import UploadEntries from "./UploadsEntries";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import {
@@ -19,6 +18,7 @@ import { useEffect, useState } from "react";
 import { UploadFull } from "@/models/api";
 import { AccessManagementDialogComponent } from "../access-management-dialog";
 import { usePrivateAxios } from "@/hooks";
+import UploadInfo from "./UploadInfo";
 
 export default function Upload() {
   const auth = useAuth();
@@ -84,7 +84,7 @@ export default function Upload() {
         <Tabs defaultValue="analytics">
           <TabsList>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            {upload.status === "ready" && (
+            {upload.status === "ready" && upload.entries.length > 1 && (
               <TabsTrigger value="entries">Entries</TabsTrigger>
             )}
           </TabsList>
@@ -92,7 +92,7 @@ export default function Upload() {
             value="analytics"
             className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2"
           >
-            <UploadAnalytics upload={upload} />
+            <UploadInfo upload={upload} />
           </TabsContent>
           <TabsContent value="entries">
             <UploadEntries upload={upload} />

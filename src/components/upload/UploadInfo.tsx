@@ -26,6 +26,16 @@ import { Separator } from "../ui/separator";
 import { UploadFull } from "@/models/api";
 import { useEffect, useState } from "react";
 import UploadStatusBadge from "../UploadStatusBadge";
+import { Badge } from "../ui/badge";
+import { mapSentiment } from "./UploadsEntries";
+
+const sentimentColors: Record<string, { bg: string; text: string }> = {
+  very_positive: { bg: "bg-green-100", text: "text-green-800" },
+  positive: { bg: "bg-lime-100", text: "text-lime-800" },
+  neutral: { bg: "bg-gray-100", text: "text-gray-800" },
+  negative: { bg: "bg-orange-100", text: "text-orange-800" },
+  very_negative: { bg: "bg-red-100", text: "text-red-800" },
+};
 
 const chartConfig = {
   visitors: {
@@ -69,7 +79,7 @@ type UploadAnalyticsValues = {
   negative_percentage: number;
 };
 
-export default function UploadAnalytics({ upload }: { upload: UploadFull }) {
+export default function UploadInfo({ upload }: { upload: UploadFull }) {
   const [stats, setStats] = useState<UploadAnalyticsValues>();
   const [pieData, setPieData] = useState<
     { sentiment: string; count: number; fill: string }[]
@@ -199,7 +209,7 @@ export default function UploadAnalytics({ upload }: { upload: UploadFull }) {
           </div>
         </CardContent>
       </Card>
-      {upload.status === "ready" && (
+      {upload.status === "ready" && upload.entries.length > 1 && (
         <>
           <Card className="flex flex-col">
             <CardContent className="flex gap-4 p-4 pb-2">
@@ -329,6 +339,32 @@ export default function UploadAnalytics({ upload }: { upload: UploadFull }) {
             </CardContent>
           </Card>
         </>
+      )}
+      {upload.entries.length == 1 && (
+        <Card className="col-span-2">
+          
+          <CardHeader className="flex flex-row justify-between items-center">
+            <CardTitle>Text</CardTitle>
+            {upload.entries[0].sentiment && (
+              <Badge
+                variant="outline"
+                className={`rounded-md px-3 py-2 text-sm font-semibold capitalize ${
+                  sentimentColors[upload.entries[0].sentiment]?.bg ||
+                  "bg-gray-100"
+                } ${sentimentColors[upload.entries[0].sentiment]?.text || "text-gray-800"}`}
+              >
+                {mapSentiment(upload.entries[0].sentiment).text}
+              </Badge>
+            )}
+          </CardHeader>
+          <CardContent>
+            {upload.entries[0].text.split("\n").map((line, i) => (
+              <p key={i} className="text-sm">
+                {line}
+              </p>
+            ))}
+          </CardContent>
+        </Card>
       )}
     </>
   );

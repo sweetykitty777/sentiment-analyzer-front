@@ -101,7 +101,7 @@ export default function FileUploadDialog() {
           <p className="mt-2 text-sm text-gray-600">
             {file
               ? "Replace the file by dropping a new one here"
-              : "Drag and drop a file here, or click to select. Max 5MB."}
+              : "Drag and drop a file here, or click to select. Max 5MB.\nSupported formats: .xlsx, .xls, .doc, .docx, .txt"}
           </p>
           <input
             type="file"
@@ -109,7 +109,7 @@ export default function FileUploadDialog() {
             className="hidden"
             id="fileInput"
             aria-label="File input"
-            accept=".xlsx,.xls"
+            accept=".xlsx,.xls,.doc,.docx,.txt"
           />
           <Button variant="outline" className="mt-4">
             Select File
